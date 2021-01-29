@@ -1,0 +1,8 @@
+scalar A;
+
+type Character {
+  age: Int,
+  name: String!
+}
+
+scalar B;

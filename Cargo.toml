@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "ag_parsing",
+    "ag_cli"
+]
