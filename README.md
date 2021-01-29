@@ -1,2 +1,2 @@
 # abstract-graphql
-Abstract your GraphQL API in packages on all languages
+Abstract calls to your GraphQL API in packages on all languages easily
