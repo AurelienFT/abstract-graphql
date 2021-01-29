@@ -13,6 +13,7 @@ pub enum TokenType {
     FIELD_NAME,
     COLON,
     COMMA,
+    SEPARATOR,
     FIELD_TYPE,
     UNKNOWN
 }
@@ -37,8 +38,14 @@ pub fn tokenize(
             "type" => prev_token = TokenType::KEYWORD_TYPE,
             ":" => prev_token = TokenType::COLON,
             "," => prev_token = TokenType::COMMA,
-            "{" => prev_token = TokenType::OPEN_BRACKET,
-            "}" => prev_token = TokenType::CLOSE_BRACKET,
+            "{" => {
+                tokens.push(Token { text: word.to_string(), ty: TokenType::OPEN_BRACKET });
+                prev_token = TokenType::OPEN_BRACKET
+            },
+            "}" => {
+                tokens.push(Token { text: word.to_string(), ty: TokenType::CLOSE_BRACKET });
+                prev_token = TokenType::CLOSE_BRACKET
+            },
             _ => {
                 match prev_token {
                     TokenType::KEYWORD_SCALAR => {
@@ -56,7 +63,7 @@ pub fn tokenize(
                     TokenType::COMMA | TokenType::OPEN_BRACKET => {
                         tokens.push(Token { text: word.to_string(), ty: TokenType::FIELD_NAME });
                         prev_token = TokenType::FIELD_NAME
-                    }
+                    },
                     _ => {}
                 }
             }
