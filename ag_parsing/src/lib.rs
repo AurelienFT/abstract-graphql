@@ -1,8 +1,8 @@
-mod types;
+pub mod types;
 
 use regex::Regex;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum TokenType {
     KEYWORD_TYPE,
     TYPE_NAME,
@@ -15,10 +15,11 @@ pub enum TokenType {
     COMMA,
     SEPARATOR,
     FIELD_TYPE,
+    KEYWORD_NEEDED,
     UNKNOWN
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
     pub text: String,
     pub ty: TokenType
@@ -46,6 +47,10 @@ pub fn tokenize(
                 tokens.push(Token { text: word.to_string(), ty: TokenType::CLOSE_BRACKET });
                 prev_token = TokenType::CLOSE_BRACKET
             },
+            "!" => {
+                tokens.push(Token { text: word.to_string(), ty: TokenType::KEYWORD_NEEDED });
+                prev_token = TokenType::KEYWORD_NEEDED
+            }
             _ => {
                 match prev_token {
                     TokenType::KEYWORD_SCALAR => {
@@ -60,7 +65,7 @@ pub fn tokenize(
                         tokens.push(Token { text: word.to_string(), ty: TokenType::FIELD_TYPE });
                         prev_token = TokenType::FIELD_TYPE
                     },
-                    TokenType::COMMA | TokenType::OPEN_BRACKET => {
+                    TokenType::FIELD_TYPE | TokenType::OPEN_BRACKET | TokenType::KEYWORD_NEEDED => {
                         tokens.push(Token { text: word.to_string(), ty: TokenType::FIELD_NAME });
                         prev_token = TokenType::FIELD_NAME
                     },
@@ -71,6 +76,26 @@ pub fn tokenize(
     }
     println!("{:#?}", tokens);
     Ok(tokens)
+}
+
+fn extract_scope (
+    tokens: Vec<Token>
+ ) -> Result<Vec<Token>, String> {
+    if tokens.len() == 0 {
+        return Err("Extract scope: Vector without any length".to_string());
+    }
+    if tokens[0].ty != TokenType::OPEN_BRACKET {
+        return Err("Extract scope: First character is not an open bracket.".to_string());   
+    }
+    let close_bracket = tokens.iter().position(|token| token.ty == TokenType::CLOSE_BRACKET);
+    match close_bracket {
+        Some(bracket) => {
+            return Ok(tokens[1..bracket].to_vec());
+        }
+        None => {
+            return Err("Extract scope: Not any closing bracket.".to_string());   
+        }
+    }
 }
 
 #[cfg(test)]

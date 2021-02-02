@@ -1,8 +1,9 @@
 scalar A;
 
 type Character {
-  age: Int,
-  name: String!
+  id: Int
+  age: Int!
+  name: String
 }
 
 scalar B;
