@@ -9,8 +9,7 @@ fn main() {
         return;
     }
 
-    let contents = fs::read_to_string(&args[1])
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(&args[1]).expect("Something went wrong reading the file");
     println!("{}", contents);
     let tokens = ag_parsing::tokenize(contents).unwrap();
     ag_codegen::typescript::write_typescript(tokens).unwrap();

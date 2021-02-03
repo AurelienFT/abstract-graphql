@@ -1,9 +1,14 @@
 scalar A;
 
+type Complex {
+  id: Int
+}
+
 type Character {
   id: Int
   age: Int!
   name: String
+  complex: Complex!
 }
 
 scalar B;
